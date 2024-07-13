@@ -7,9 +7,9 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
     <Company>Jamaa Technologies</Company>
-    <Authors>AdhamAwadhi,JamaaTech,VahidMhrb</Authors>
+    <Authors>Vahid Mehrabi,AdhamAwadhi,JamaaTech</Authors>
     <NeutralLanguage>en</NeutralLanguage>
-    <Owners>AdhamAwadhi,JamaaTech,VahidMhrb</Owners>
+    <Owners>Vahid Mehrabi,AdhamAwadhi,JamaaTech</Owners>
     <Summary>HardwareAnalyzer</Summary>
     <PackageTags>.net smpp</PackageTags>
     <Title>Mobin SMPP Client</Title>
