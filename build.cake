@@ -45,8 +45,11 @@ Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
     {
-        MSBuild(solution, new MSBuildSettings(){Configuration = configuration, ToolPath = msBuildPathX64}
-                                               .WithProperty("SourceLinkCreate","true"));
+        MSBuild(solution, new MSBuildSettings(){
+            Configuration = configuration,
+            ToolVersion = MSBuildToolVersion.VS2022
+        }
+        .WithProperty("SourceLinkCreate","true"));
     });
     
 

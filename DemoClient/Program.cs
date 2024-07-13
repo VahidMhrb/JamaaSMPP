@@ -118,6 +118,12 @@ namespace DemoClient
             if (string.IsNullOrEmpty(msgTxt))
                 msgTxt = @"السلام عليكم ورحمة الله وبركاته
 هذه رسالة عربية
+متعددة الاسطر
+متعددة الاسطر
+متعددة الاسطر
+متعددة الاسطر
+متعددة الاسطر
+متعددة الاسطر
 متعددة الاسطر";
 
             TextMessage msg = new TextMessage();
@@ -183,10 +189,10 @@ namespace DemoClient
 #else
             return new SmppConfiguration()
             {
-                SystemID = "smppclient1",
-                Password = "password",
-                Host = "localhost",
-                Port = 5016,
+                SystemID = "xZeRiMwVyOLwxA2",
+                Password = "G7diWSVY",
+                Host = "smscsim.smpp.org",
+                Port = 2775,
                 SystemType = "5750",
                 DefaultServiceType = "5750",
                 SourceAddress = "5750",
@@ -275,8 +281,21 @@ namespace DemoClient
 
         private static void client_MessageSent(object sender, MessageEventArgs e)
         {
-            var client = (SmppClient)sender;
-            Console.WriteLine("SMPP client {0} - Message Sent to: {1} {2}", client.Name, e.ShortMessage.DestinationAddress, e.ShortMessage.UserMessageReference);
+            //var client = (SmppClient)sender;
+            //Console.WriteLine("SMPP client {0} - Message Sent to: {1} {2}", client.Name, e.ShortMessage.DestinationAddress, e.ShortMessage.UserMessageReference);
+            Console.WriteLine($@"SMPP message sent.
+    SourceAddress : {e.ShortMessage.SourceAddress}
+    DestinationAddress : {e.ShortMessage.DestinationAddress}
+    ReceiptedMessageId : {e.ShortMessage.ReceiptedMessageId}
+    UserMessageReference : {e.ShortMessage.UserMessageReference}
+    SubmitUserMessageReference : {e.ShortMessage.SubmitUserMessageReference}
+    SegmentID : {e.ShortMessage.SegmentID}
+    SequenceNumber : {e.ShortMessage.SequenceNumber}
+    MessageCount : {e.ShortMessage.MessageCount}
+    RegisterDeliveryNotification : {e.ShortMessage.RegisterDeliveryNotification}
+    MessageState : {e.ShortMessage.MessageState}
+    NetworkErrorCode : {e.ShortMessage.NetworkErrorCode}");
+            Console.WriteLine($"Sent event fired, event.shortMessage : {(e.ShortMessage is TextMessage msg ? msg.Text : "null")}");
             // CANDO: save sent sms
         }
 
@@ -284,7 +303,8 @@ namespace DemoClient
         {
             var client = (SmppClient)sender;
             //Console.WriteLine("SMPP client {0} Message Delivered to: {1}", client.Name, e.ShortMessage.DestinationAddress);
-            Console.WriteLine("SMPP client {0} - Message Delivered: MessageId: {1}", client.Name, e.ShortMessage.UserMessageReference);
+            //Console.WriteLine("SMPP client {0} - Message Delivered: MessageId: {1}", client.Name, e.ShortMessage.UserMessageReference);
+            Console.WriteLine($"Delivered event fired, event.shortMessage : {(e.ShortMessage is TextMessage msg ? msg.Text : "null")}");
 
 
             // CANDO: save delivered sms
