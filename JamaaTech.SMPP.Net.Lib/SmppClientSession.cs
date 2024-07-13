@@ -180,7 +180,7 @@ namespace JamaaTech.Smpp.Net.Lib
 
         private void SendPduBase(PDU pdu)
         {
-            if (pdu == null) { throw new ArgumentNullException("pdu"); }
+            if (pdu == null) { throw new ArgumentNullException(nameof(pdu)); }
             if (!(CheckState(pdu) && (pdu.AllowedSource & SmppEntityType.ESME) == SmppEntityType.ESME))
             { throw new SmppException(SmppErrorCode.ESME_RINVBNDSTS, "Incorrect bind status for given command"); }
             try { vTrans.Send(pdu); }
