@@ -17,12 +17,13 @@
     <Copyright>Jamaa Technologies</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageLicense>https://github.com/VahidMhrb/JamaaSMPP/blob/master/LICENSE</PackageLicense>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <Version>$(Version)</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>
       2.0.1
 
@@ -38,6 +39,8 @@
   <ItemGroup>
     <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" />
     <PackageReference Include="Common.Logging" Version="3.4.1" />
+    <None Include="..\README.md" Pack="true" PackagePath=""/>
+    <None Include="..\LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
