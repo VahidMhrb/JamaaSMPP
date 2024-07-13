@@ -27,7 +27,7 @@ namespace JamaaTech.Smpp.Net.Client
 {
     public class SmppClient : IDisposable
     {
-        private static readonly global::Common.Logging.ILog _Log = global::Common.Logging.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly Common.Logging.ILog _Log = Common.Logging.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         #region Variables
         private SmppConnectionProperties vProperties;
@@ -36,7 +36,7 @@ namespace JamaaTech.Smpp.Net.Client
         private Exception vLastException;
         private SmppConnectionState vState;
         private object vConnSyncRoot;
-        private System.Threading.Timer vTimer;
+        private Timer vTimer;
         private int vTimeOut;
         private int vAutoReconnectDelay;
         private string vName;
@@ -189,24 +189,23 @@ namespace JamaaTech.Smpp.Net.Client
             if (vState != SmppConnectionState.Connected)
             { throw new SmppClientException("Sending message operation failed because the SmppClient is not connected"); }
 
-            string messageId = null;
             var srcAddress = new SmppAddress(vProperties.AddressTon, vProperties.AddressNpi, string.IsNullOrWhiteSpace(message.SourceAddress) ? Properties.SourceAddress : message.SourceAddress);
-            var destAddress = new SmppAddress(){ Address = message.DestinationAddress};
-            foreach (SendSmPDU pdu in message.GetMessagePDUs(vProperties.DefaultEncoding, vSmppEncodingService,destAddress, srcAddress))
+            var destAddress = new SmppAddress() { Address = message.DestinationAddress };
+            var messagePdUs = message.GetMessagePDUs(vProperties.DefaultEncoding, vSmppEncodingService, destAddress, srcAddress);
+            foreach (SendSmPDU pdu in messagePdUs)
             {
+                string messageId = null;
                 if (_Log.IsDebugEnabled) _Log.DebugFormat("SendMessage SendSmPDU: {0}", LoggingExtensions.DumpString(pdu, vSmppEncodingService));
                 ResponsePDU resp = SendPdu(pdu, timeOut);
-                var submitSmResp = resp as SubmitSmResp;
-                if (submitSmResp != null)
+                if (resp is SubmitSmResp submitSmResp)
                 {
                     if (_Log.IsDebugEnabled) _Log.DebugFormat("SendMessage Response: {0}", LoggingExtensions.DumpString(resp, vSmppEncodingService));
-                    messageId = ((SubmitSmResp)resp).MessageID;
+                    messageId = submitSmResp.MessageID;
                 }
                 if (message.ReceiptedMessageId is { Length: > 0 })
                     message.ReceiptedMessageId += $",{messageId}";
                 else
                     message.ReceiptedMessageId += messageId;
-
                 RaiseMessageSentEvent(message);
             }
         }
@@ -217,7 +216,7 @@ namespace JamaaTech.Smpp.Net.Client
         /// <param name="pdu"><see cref="RequestPDU"/></param>
         /// <param name="timeout">A value in miliseconds after which the send operation times out</param>
         /// <returns><see cref="ResponsePDU"/></returns>
-        public virtual ResponsePDU SendPdu(RequestPDU pdu, int timeout)
+        protected virtual ResponsePDU SendPdu(RequestPDU pdu, int timeout)
         {
             var resp = vTrans.SendPdu(pdu, timeout);
             if (resp.Header.ErrorCode != SmppErrorCode.ESME_ROK)
@@ -249,7 +248,7 @@ namespace JamaaTech.Smpp.Net.Client
             return vSendMessageCallBack.BeginInvoke(message, timeout, callback, state);
 
 #else
-                return System.Threading.Tasks.Task.Run(() => vSendMessageCallBack(message, timeout));
+            return System.Threading.Tasks.Task.Run(() => vSendMessageCallBack(message, timeout));
 #endif
         }
 
@@ -262,8 +261,7 @@ namespace JamaaTech.Smpp.Net.Client
         /// <returns>An <see cref="IAsyncResult"/> that references the asynchronous send message operation</returns>
         public virtual IAsyncResult BeginSendMessage(ShortMessage message, AsyncCallback callback, object state)
         {
-            int timeout = 0;
-            timeout = vTrans.DefaultResponseTimeout;
+            int timeout = vTrans.DefaultResponseTimeout;
             return BeginSendMessage(message, timeout, callback, state);
         }
 
@@ -465,9 +463,7 @@ namespace JamaaTech.Smpp.Net.Client
 
         private void CloseSession()
         {
-            SmppConnectionState oldState = SmppConnectionState.Closed;
-
-            oldState = vState;
+            SmppConnectionState oldState = vState;
             if (vState == SmppConnectionState.Closed) { return; }
             vState = SmppConnectionState.Closed;
 
@@ -487,8 +483,7 @@ namespace JamaaTech.Smpp.Net.Client
 
         private void ChangeState(SmppConnectionState newState)
         {
-            SmppConnectionState oldState = SmppConnectionState.Closed;
-            oldState = vState;
+            SmppConnectionState oldState = vState;
             vState = newState;
             vProperties.SmscID = newState == SmppConnectionState.Connected ? vTrans.SmscID : "";
             RaiseConnectionStateChangeEvent(newState, oldState);
@@ -627,9 +622,8 @@ namespace JamaaTech.Smpp.Net.Client
             //Stop the timer from raising subsequent events before
             //the current thread exists
             StopTimer();
-
-            int timeOut = 0;
-            timeOut = vTimeOut;
+            
+            int timeOut = vTimeOut;
             try { Open(timeOut); }
             catch (Exception) {/*Do nothing*/}
 
