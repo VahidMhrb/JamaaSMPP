@@ -7,7 +7,7 @@ This is created based on  https://www.nuget.org/packages/JammaSMPP
 
 ### [Wiki](https://github.com/AdhamAwadhi/JamaaSMPP/wiki)
 
-## [NuGet](https://www.nuget.org/packages/Mobin.Smpp) ![#](https://img.shields.io/nuget/v/JamaaSMPP.svg)
+## [NuGet](https://www.nuget.org/packages/Mobin.Smpp) ![#](https://img.shields.io/nuget/v/Mobin.Smpp.svg)
 	Install-Package Mobin.Smpp
 
 
