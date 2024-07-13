@@ -546,7 +546,7 @@ namespace JamaaTech.Smpp.Net.Client
                         smppEx.ErrorCode, new ByteBuffer(pdu.GetBytes()).DumpString(), smppEx.Message));
                 }
                 //Notify the SMSC that we encountered an error while processing the message
-                e.Response = pdu.CreateDefaultResponce();
+                e.Response = pdu.CreateDefaultResponse();
                 e.Response.Header.ErrorCode = smppEx.ErrorCode;
                 return;
             }
@@ -560,7 +560,7 @@ namespace JamaaTech.Smpp.Net.Client
                         new ByteBuffer(pdu.GetBytes()).DumpString(), ex.Message));
                 }
                 //Let the receiver know that this message was rejected
-                e.Response = pdu.CreateDefaultResponce();
+                e.Response = pdu.CreateDefaultResponse();
                 e.Response.Header.ErrorCode = SmppErrorCode.ESME_RX_P_APPN; //ESME Receiver Reject Message
                 return;
             }
